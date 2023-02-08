@@ -6,6 +6,7 @@ import { AppModule } from '../src/app.module';
 import * as pactum from 'pactum';
 import { AuthDto } from '../src/auth/dto';
 import { EditUserDto } from '../src/user/dto';
+import { CreateBookMarkDto, EditBookmarkDto } from '../src/bookmark/dto';
 
 describe('A e2e', () => {
   let app: INestApplication;
@@ -124,21 +125,95 @@ describe('A e2e', () => {
             Authorization: 'Bearer $S{userAt}',
           })
           .withBody(dto)
-          .expectStatus(200)
-          .inspect();
+          .expectStatus(200);
       });
     });
   });
 
   describe('Bookmark', () => {
-    describe('Create bookmark', () => {});
+    describe('Get empty bookmarks', () => {
+      it('should get empty bookmarks', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectBody([])
+          .expectStatus(200);
+      });
+    });
 
-    describe('Get bookmarks', () => {});
+    describe('Create bookmark', () => {
+      const dto: CreateBookMarkDto = {
+        title: 'How to code in Java',
+        description: 'Coding in java is not easy at all',
+        link: 'www.youtube.com/sdfasdfsdfsdf',
+      };
+      it('should create a bookmark', () => {
+        return pactum
+          .spec()
+          .post('/bookmarks/create')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
+          .expectStatus(201);
+      });
+    });
 
-    describe('Get bookmark by id', () => {});
+    describe('Get bookmarks', () => {
+      it('should bookmarks', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200);
+      });
+    });
 
-    describe('Edit bookmark by id', () => {});
+    describe('Get bookmark by id', () => {
+      it('should get bookmark by id', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks/2')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200);
+      });
+    });
 
-    describe('Delete bookmark by id', () => {});
+    describe('Edit bookmark by id', () => {
+      const dto: EditBookmarkDto = {
+        title: 'how to code in typeScript',
+        description: 'Coding is very very difficult',
+        link: 'www.youtube.com/sfadfashkhjldfkjsdf',
+      };
+      it('should edit bookmark', () => {
+        return pactum
+          .spec()
+          .patch('/bookmarks/4')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
+          .expectStatus(200);
+      });
+    });
+
+    describe('Delete bookmark by id', () => {
+      it('should edit bookmark', () => {
+        return pactum
+          .spec()
+          .delete('/bookmarks/4')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200);
+      });
+    });
   });
 });
